@@ -1,7 +1,6 @@
 package com.lx;
 
 import com.lx.single.DataStore;
-import com.sun.tools.javac.util.StringUtils;
 
 public class Main {
 
@@ -29,7 +28,7 @@ public class Main {
         }
 
         DataStore instance = DataStore.getInstance();
-        instance.Init(args);
+        instance.InitData(args);
 
 
         System.out.println("Hello world!");
