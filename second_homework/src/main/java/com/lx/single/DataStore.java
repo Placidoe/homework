@@ -61,7 +61,7 @@ public class DataStore {
 
     public void insertNum(){//入操作数
         st.push(random.nextInt(num2+1));
-    }
+    }// 入操作数
     public void InitData(String[] args){
         if(args.length==4){
             op1=args[0];
@@ -107,8 +107,13 @@ public class DataStore {
                     num2= (int) st.pop();
                     while(!st.isEmpty()){
                         op2= (String) st.pop();
-                        if(op2.equals("*")||op2.equals("/")){
-                            //TODO
+                        if(op2.equals("*")||op2.equals("/")){// 先做乘除运算
+                            num2 = calculate(op2, num2, num3);
+                        } else {
+                            st.push(num3);
+                            st.push(op2);
+                            break;
+                            }
                         }
                     }
                 }
