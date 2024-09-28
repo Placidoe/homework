@@ -1,5 +1,6 @@
 package com.lx.single;
 
+import com.lx.utils.IOUtils;
 import lombok.Data;
 
 import java.util.*;
@@ -180,8 +181,10 @@ public class DataStore {
             }
             //2.运算(运算+补偿+拼接表达式)
             int res=evalRPN(tokens);
+            IOUtils.saveExercises(HashString.toString());
             HashString.append("=");
             HashString.append(res);
+            IOUtils.saveExercises(HashString.toString());
             //3.校验表达式是否唯一，不唯一则要重试
             if(set.contains(HashString)){
                 j--;
