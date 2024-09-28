@@ -1,5 +1,7 @@
 package com.lx.single;
 
+import com.lx.utils.FractionGenerator;
+import com.lx.utils.IOUtils;
 import lombok.Data;
 
 import java.util.*;
@@ -66,7 +68,7 @@ public class DataStore {
 
     public void insertNum(){//入操作数
 //        stringBuilder.append(random.nextInt(num2+1));
-        tokens[index++]= String.valueOf(random.nextInt(num2+1));
+        tokens[index++]= String.valueOf(FractionGenerator.generateTrueFraction());
     }
     public void InitData(String[] args){
 
@@ -96,8 +98,8 @@ public class DataStore {
         }
     }
 
-    public int evalRPN(String[] tokens) {
-        Deque<Integer> stack = new LinkedList<Integer>();
+    public Double evalRPN(String[] tokens) {
+        Deque<Double> stack = new LinkedList<Double>();
         Deque<String> express = new LinkedList<String>();
 
         express.push(tokens[0]);
@@ -105,10 +107,10 @@ public class DataStore {
         for (int i = 0; i < n; i++) {
             String token = tokens[i];
             if (isNumber(token)) {
-                stack.push(Integer.parseInt(token));
+                stack.push(Double.parseDouble(token));
             } else {
-                int num2 = stack.pop();
-                int num1 = stack.pop();
+                Double num2 = stack.pop();
+                Double num1 = stack.pop();
 //
                 StringBuilder HashString1 = new StringBuilder();
                 switch (token) {
@@ -179,9 +181,11 @@ public class DataStore {
                 System.out.println(tokens[i]);
             }
             //2.运算(运算+补偿+拼接表达式)
-            int res=evalRPN(tokens);
+            Double res=evalRPN(tokens);
+            IOUtils.saveExercises(HashString.toString());
             HashString.append("=");
             HashString.append(res);
+            IOUtils.saveAnswers(HashString.toString());
             //3.校验表达式是否唯一，不唯一则要重试
             if(set.contains(HashString)){
                 j--;
