@@ -43,18 +43,20 @@ public class DataStore {
     static Stack<Object> st;//用来存放操作数和操作符。自栈顶向下，就是自表达式左向右
     static StringBuilder stringBuilder;
     static HashSet set;
-    StringBuilder HashString;
+    static StringBuilder HashString;
     static int index;
     static String[] tokens;
+
     String[] ops={"+","-","*","/"};
     static {
-        num1=1;
+        num1=3;
         num2=2;
         random = new Random();
         st=new Stack<>();
         set=new HashSet();
         stringBuilder=new StringBuilder();
         tokens=new String[1000];
+        HashString=new StringBuilder();
     }
     public void insertOp(){//入操作符
         int val = random.nextInt(4);
@@ -80,9 +82,11 @@ public class DataStore {
 
     }
     public void InitTokens(){
-
+        tokens=new String[1000];
+        index=0;
         //1.生成运算符的个数
-        int count = random.nextInt(num2+1);//左闭右开[0~num2)
+        int val=random.nextInt(num2+1);
+        int count = val==0?1:val;//左闭右开[0~num2)
 
         //2.入栈操作数和操作符
         insertNum();
@@ -94,7 +98,10 @@ public class DataStore {
 
     public int evalRPN(String[] tokens) {
         Deque<Integer> stack = new LinkedList<Integer>();
-        int n = tokens.length;
+        Deque<String> express = new LinkedList<String>();
+
+        express.push(tokens[0]);
+        int n = index;
         for (int i = 0; i < n; i++) {
             String token = tokens[i];
             if (isNumber(token)) {
@@ -102,35 +109,58 @@ public class DataStore {
             } else {
                 int num2 = stack.pop();
                 int num1 = stack.pop();
+//
+                StringBuilder HashString1 = new StringBuilder();
                 switch (token) {
                     case "+":
-                        HashString.append(num1);
-                        HashString.append("+");
-                        HashString.append(num2);
+                        String str1 = express.pop();
+                        HashString1.append("(");
+                        HashString1.append(str1);
+                        HashString1.append("+");
+                        HashString1.append(num2);
+                        HashString1.append(")");
+                        express.push(HashString1.toString());
+
                         stack.push(num1 + num2);
                         break;
                     case "-":
-                        HashString.append(num1);
-                        HashString.append("-");
-                        HashString.append(num2);
+                        String str2 = express.pop();
+                        HashString1.append("(");
+                        HashString1.append(str2);
+                        HashString1.append("-");
+                        HashString1.append(num2);
+                        HashString1.append(")");
+                        express.push(HashString1.toString());
+
                         stack.push(num1 - num2);
                         break;
                     case "*":
-                        HashString.append(num1);
-                        HashString.append("*");
-                        HashString.append(num2);
+                        String str3 = express.pop();
+                        HashString1.append("(");
+                        HashString1.append(str3);
+                        HashString1.append("*");
+                        HashString1.append(num2);
+                        HashString1.append(")");
+                        express.push(HashString1.toString());
                         stack.push(num1 * num2);
                         break;
                     case "/":
-                        HashString.append(num1);
-                        HashString.append("/");
-                        HashString.append(num2);
+                        if(num2==0)num2++;
+                        String str4 = express.pop();
+                        HashString1.append("(");
+                        HashString1.append(str4);
+                        HashString1.append("/");
+                        HashString1.append(num2);
+                        HashString1.append(")");
+                        express.push(HashString1.toString());
+
                         stack.push(num1 / num2);
                         break;
                     default:
                 }
             }
         }
+        HashString=new StringBuilder(express.pop());
         return stack.pop();
     }
 
@@ -140,21 +170,29 @@ public class DataStore {
 
 
     public void Run(){
-        //1.初始化tokens
-        InitTokens();
-        //2.运算(运算+补偿+拼接表达式)
-        int res=evalRPN(tokens);
-        HashString.append("=");
-        HashString.append(res);
-        //3.校验表达式是否唯一，不唯一则要重试
-        if(set.contains(HashString)){
-            Run();
+
+        //运行指定的次数
+        for(int j=0;j<num1;j++){
+            //1.初始化tokens
+            InitTokens();
+            for(int i=0;i<index;i++){
+                System.out.println(tokens[i]);
+            }
+            //2.运算(运算+补偿+拼接表达式)
+            int res=evalRPN(tokens);
+            HashString.append("=");
+            HashString.append(res);
+            //3.校验表达式是否唯一，不唯一则要重试
+            if(set.contains(HashString)){
+                j--;
+                HashString=new StringBuilder();
+                continue;
+            }
+            set.add(HashString);
+            //4.完成表达式
+            System.out.println(HashString.toString());
             HashString=new StringBuilder();
         }
-        set.add(HashString);
-        //4.完成表达式
-        System.out.println(HashString.toString());
-        HashString=new StringBuilder();
     }
 
     public int caculate(String op,int num1,int num2){

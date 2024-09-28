@@ -27,10 +27,13 @@ public class Main {
             System.out.println("操作数错误，请输入正确的操作数");
         }
 
-        DataStore instance = DataStore.getInstance();
-        instance.InitData(args);
+
+        DataStore dataStore=DataStore.getInstance();
+        dataStore.InitData(args);
+
+        dataStore.Run();
 
 
-        System.out.println("Hello world!");
+
     }
 }
